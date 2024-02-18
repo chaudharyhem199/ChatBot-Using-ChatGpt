@@ -7,6 +7,8 @@ import hashlib
 from glob import glob
 from datetime import datetime
 
+#streamlit is used for creating the web app. 
+#The langchain library is used for processing documents and building the chatbot functionality.
 import streamlit as st
 from langchain.document_loaders import DirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -35,7 +37,7 @@ def load_docs(directory: str):
 
     return documents
 
-
+#split_docs splits these documents into manageable chunks for processing. This is useful for handling large documents
 def split_docs(documents, chunk_size=1000, chunk_overlap=20):
     """
     Split the documents into chunks.
@@ -45,7 +47,7 @@ def split_docs(documents, chunk_size=1000, chunk_overlap=20):
 
     return docs
 
-
+#It loads and processes documents, and generates embeddings.
 @st.cache_resource
 def startup_event(last_update: str):
     """
@@ -58,7 +60,7 @@ def startup_event(last_update: str):
 
     embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
     persist_directory = "chroma_db"
-
+#initializes the chatbot model and question-answering chain.
     vectordb = Chroma.from_documents(
         documents=docs,
         embedding=embeddings,
@@ -74,7 +76,7 @@ def startup_event(last_update: str):
 
     return db, chain
 
-
+#The get_answer function searches the document database for documents similar to the user's query
 def get_answer(query: str, db, chain):
     """
     Queries the model with a given question and returns the answer.
@@ -93,6 +95,8 @@ def get_answer(query: str, db, chain):
 
     return {"answer": answer, "sources": sources}
 
+#The start_chatbot function manages the chatbot's state and interaction with the user. 
+#It records the conversation history and uses the get_answer function to respond to user queries.
 def start_chatbot():
     db, chain = startup_event(last_db_updated)
     if "openai_model" not in st.session_state:
@@ -118,7 +122,7 @@ def start_chatbot():
             message_placeholder.markdown(answer)
             st.session_state.messages.append({"role": "assistant", "content": answer})
 
-
+#Users can choose between using an existing knowledge base or uploading new documents. 
 content_type = st.sidebar.radio("Which Knowledge base you want to use?",
                                 [ALREADY_UPLOADED, UPLOAD_NEW])
 
@@ -127,7 +131,7 @@ if content_type == UPLOAD_NEW:
     uploaded_files = st.sidebar.file_uploader("Choose a txt file", accept_multiple_files=True)
 
     uploaded_file_names = [file.name for file in uploaded_files]
-
+##If new documents are uploaded, the application processes and stores them in a temporary directory.
     if uploaded_files is not None and len(uploaded_files):
         if os.path.exists(tmp_directory):
             shutil.rmtree(tmp_directory)
