@@ -5,6 +5,7 @@ This chatbot, operating within the concept of Retrieval-Augmented Generation (RA
 
 ![image](https://github.com/chaudharyhem199/ChatBot-Using-ChatGpt/assets/147739248/f2b9da14-9f7e-4912-bba2-0c7dda973805)
 
+![image](https://github.com/chaudharyhem199/ChatBot-Using-ChatGpt/assets/147739248/1de786fd-cf4f-4c96-a4b9-c2d2a0fbc0f2)
 
 
 ## Instructions
